@@ -1,9 +1,9 @@
 using DotNetEnv;
 using Infrastructure;
-// using Application;
+using Application;
 using Microsoft.EntityFrameworkCore;
 //cargamos dotenv
-DotNetEnv.Env.Load();
+DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST") ?? 
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")}";
 // Add services to the container.
 builder.Services.AddInfrastructure(builder.Configuration, connectionString);
-// builder.Services.AddApplication();
+builder.Services.AddApplication();
 
 //Servicios de la API
 builder.Services.AddControllers();
