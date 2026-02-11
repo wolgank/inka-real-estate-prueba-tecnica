@@ -10,12 +10,16 @@ public class ProductService : IProductService
     private readonly IProductRepository _productRepository;
     private readonly IValidator<CreateProductDto> _createValidator;
     private readonly IValidator<UpdateProductDto> _updateValidator;
+    private readonly IEmailService _emailService;
+    private readonly IUserRepository _userRepository;
 
-    public ProductService(IProductRepository productRepository, IValidator<CreateProductDto> createValidator, IValidator<UpdateProductDto> updateValidator)
+    public ProductService(IProductRepository productRepository, IValidator<CreateProductDto> createValidator, IValidator<UpdateProductDto> updateValidator, IEmailService emailService, IUserRepository userRepository)
     {
         _productRepository = productRepository;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _emailService = emailService;
+        _userRepository = userRepository;
     }
 
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
@@ -49,7 +53,7 @@ public class ProductService : IProductService
         // Regla de negocio: Notificación si el stock inicial es bajo
         if (createdProduct.Stock < 5)
         {
-            // TODO: Llamar a servicio de notificación (Email/Alert)
+            await NotifyAdminsIfStockLow(createdProduct);
             Console.WriteLine($"ALERTA: Producto {createdProduct.Name} creado con stock bajo: {createdProduct.Stock}");
         }
 
@@ -76,7 +80,7 @@ public class ProductService : IProductService
         // Regla de negocio: Validar stock tras actualización
         if (existingProduct.Stock < 5)
         {
-            // TODO: Notificar al administrador
+            await NotifyAdminsIfStockLow(existingProduct);
             Console.WriteLine($"ALERTA: El stock de {existingProduct.Name} ha bajado a {existingProduct.Stock}");
         }
     }
@@ -104,4 +108,15 @@ public class ProductService : IProductService
         Stock = p.Stock,
         Category = p.Category
     };
+    private async Task NotifyAdminsIfStockLow(Product product)
+    {
+        if (product.Stock < 5)
+        {
+            var adminEmails = await _userRepository.GetAdminEmailsAsync();
+            if (adminEmails.Any())
+            {
+                await _emailService.SendLowStockAlertAsync(product.Name, product.Stock, adminEmails);
+            }
+        }
+    }
 }

@@ -12,6 +12,7 @@ namespace UnitTests;
 public class ProductServiceTests
 {
     private readonly Mock<IProductRepository> _productRepositoryMock;
+    private readonly Mock<IEmailService> _emailServiceMock;
     private readonly CreateProductValidator _createValidator; 
     private readonly UpdateProductValidator _updateValidator;
     private readonly ProductService _productService;
@@ -19,13 +20,15 @@ public class ProductServiceTests
     public ProductServiceTests()
     {
         _productRepositoryMock = new Mock<IProductRepository>();
+        _emailServiceMock = new Mock<IEmailService>();
         _createValidator = new CreateProductValidator();
         _updateValidator = new UpdateProductValidator();
         
         _productService = new ProductService(
             _productRepositoryMock.Object, 
             _createValidator, 
-            _updateValidator);
+            _updateValidator,
+            _emailServiceMock.Object);
     }
 
     #region Create Tests

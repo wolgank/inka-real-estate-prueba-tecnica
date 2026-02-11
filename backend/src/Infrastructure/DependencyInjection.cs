@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IPdfService, PdfService>();
+        services.AddScoped<IEmailService, EmailService>();
 
         return services;
     }
