@@ -1,0 +1,45 @@
+Prueba Técnica – Sistema de Gestión de Inventarios
+Descripción del Caso Práctico
+Se te solicita desarrollar un sistema de gestión de inventarios para una tienda en línea. El sistema debe incluir las siguientes características:
+1. Módulo de Autenticación
+• Implementar inicio de sesión y registro de usuarios.
+• Los usuarios pueden tener dos roles:
+  - Administrador: Tiene acceso completo al sistema.
+  - Empleado: Tiene acceso limitado (solo puede ver productos y reportar inventarios bajos).
+2. Módulo de Productos
+• CRUD completo (Crear, Leer, Actualizar, Eliminar) para productos.
+• Cada producto debe incluir:
+  - Nombre
+  - Descripción
+  - Precio
+  - Cantidad en inventario
+  - Categoría
+• Validar que no se pueda ingresar un producto con cantidad negativa.
+3. Notificaciones de Inventario Bajo
+• Cuando la cantidad de un producto sea menor a 5, debe enviarse una notificación al administrador.
+4. Módulo de Reportes
+• Un administrador puede generar un reporte en PDF con los productos que tienen inventario bajo.
+5. Frontend Responsivo
+• Una interfaz simple pero funcional que permita:
+  - Autenticación.
+  - Gestión de productos.
+  - Visualización de productos con búsqueda y filtros (por nombre y categoría).
+6. API RESTful
+• Diseñar una API RESTful que sirva como backend para el sistema. La API debe:
+  - Seguir principios REST (status codes, métodos HTTP correctos).
+  - Incluir autenticación basada en tokens (JWT o similar).
+7. Requisitos Adicionales
+• Debe incluir pruebas unitarias para las funciones principales del backend.
+• Implementar buenas prácticas de seguridad, como validación de entradas y protección contra inyección SQL.
+• Incluir un archivo README.md con instrucciones claras para ejecutar el sistema.
+Entregables
+1. Código fuente completo, alojado en un repositorio de Git.
+   Incluye commits que demuestren el proceso de desarrollo.
+2. Instrucciones para desplegar el proyecto en un entorno local (puedes usar contenedores Docker si lo deseas).
+3. Pruebas unitarias para al menos el 30% del backend.
+4. Demo funcional: El sistema debe ser accesible localmente para evaluación.
+Tecnologías Requeridas
+• Frontend: React, Vue.js o Angular.
+• Backend: NET6 o superior.
+• Base de Datos: SQL Server, PostgreSQL o MongoDB.
+• Herramientas Adicionales: Docker.
