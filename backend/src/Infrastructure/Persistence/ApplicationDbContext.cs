@@ -12,9 +12,19 @@ public class ApplicationDbContext : DbContext
     // Tablas
     public DbSet<Product> Products { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<UserProfile> UserProfiles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<UserProfile>().ToTable("UserProfiles");
+        modelBuilder.Entity<User>().ToTable("Users");
+        modelBuilder.Entity<Product>().ToTable("Products");
+        
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Profile)
+            .WithOne(p => p.User)
+            .HasForeignKey<User>(u => u.UserProfileId);
+            
         base.OnModelCreating(modelBuilder);
 
         // Configuración adicional (Fluent API)

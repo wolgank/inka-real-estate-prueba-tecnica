@@ -11,8 +11,8 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IProductService, ProductService>();
-        // Aquí agregaremos IAuthService más adelante
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }

@@ -2,12 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs.Auth;
 
-public class RegisterDto
-{
-    [Required]
-    public string Username { get; set; } = string.Empty;
-
-    [Required]
-    [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
-    public string Password { get; set; } = string.Empty;
-}
+public record RegisterDto(
+    string Username,
+    string Password,
+    string FirstName,
+    string LastName,
+    string Dni,
+    string PhoneNumber,
+    string Email,
+    string Role // "Admin" o "Employee"
+);

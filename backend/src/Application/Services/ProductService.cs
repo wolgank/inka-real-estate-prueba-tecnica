@@ -8,12 +8,14 @@ namespace Application.Services;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
-    private readonly IValidator<CreateProductDto> _validator;
+    private readonly IValidator<CreateProductDto> _createValidator;
+    private readonly IValidator<UpdateProductDto> _updateValidator;
 
-    public ProductService(IProductRepository productRepository, IValidator<CreateProductDto> validator)
+    public ProductService(IProductRepository productRepository, IValidator<CreateProductDto> createValidator, IValidator<UpdateProductDto> updateValidator)
     {
         _productRepository = productRepository;
-        _validator = validator;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
     }
 
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
@@ -30,7 +32,7 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> CreateAsync(CreateProductDto dto)
     {
-        var validationResult = await _validator.ValidateAsync(dto);
+        var validationResult = await _createValidator.ValidateAsync(dto);
         if (!validationResult.IsValid) 
             throw new ValidationException(validationResult.Errors);
         var product = new Product
@@ -56,6 +58,10 @@ public class ProductService : IProductService
 
     public async Task UpdateAsync(int id, UpdateProductDto dto)
     {
+        var validationResult = await _updateValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid) 
+            throw new ValidationException(validationResult.Errors);
+        
         var existingProduct = await _productRepository.GetByIdAsync(id);
         if (existingProduct == null) throw new KeyNotFoundException("Producto no encontrado");
 

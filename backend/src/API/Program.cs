@@ -1,8 +1,12 @@
-using DotNetEnv;
 using Infrastructure;
 using Application;
-using Microsoft.EntityFrameworkCore;
-//cargamos dotenv
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
+using API.Exceptions;
+using System.Security.Claims;
+
 DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,18 +16,73 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST") ?? 
                        $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
                        $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")}";
-// Add services to the container.
+
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new Exception("JWT_KEY missing");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            RoleClaimType = ClaimTypes.Role
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddInfrastructure(builder.Configuration, connectionString);
 builder.Services.AddApplication();
 
-//Servicios de la API
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+//EXCEPCIONES - REGISTRAR LOS HANDLERS EN EL ORDEN CORRECTO (DE MÁS ESPECÍFICOS A MÁS GENERALES)
+//-------------------------------------------------------------------------------------------------
+builder.Services.AddSingleton<IExceptionHandler, ValidationExceptionHandler>();
+builder.Services.AddSingleton<IExceptionHandler, UnauthorizedExceptionHandler>();
+builder.Services.AddSingleton<IExceptionHandler, ForbiddenExceptionHandler>();
+//siempre el GlobalExceptionHandler va al final, porque es el "catch-all" que maneja cualquier excepción no manejada por los anteriores
+builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
+//-------------------------------------------------------------------------------------------------
+
+
+
+// --- CONFIGURACIÓN DE SWAGGER PARA JWT ---
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Inka Real Estate API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        In = ParameterLocation.Header,
+        Description = "Por favor ingresa el token así: 'Bearer {tu_token}'",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+// -----------------------------------------
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -31,9 +90,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
