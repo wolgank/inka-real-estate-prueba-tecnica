@@ -52,6 +52,15 @@ builder.Services.AddSingleton<IExceptionHandler, ForbiddenExceptionHandler>();
 builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
 //-------------------------------------------------------------------------------------------------
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("WebApp", policy =>
+    {
+        policy.AllowAnyOrigin() // En producción pondríamos la URL del frontend
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 
 // --- CONFIGURACIÓN DE SWAGGER PARA JWT ---
@@ -82,6 +91,9 @@ builder.Services.AddSwaggerGen(c => {
 // -----------------------------------------
 
 var app = builder.Build();
+
+app.UseCors("WebApp");
+
 app.UseMiddleware<ExceptionMiddleware>();
 if (app.Environment.IsDevelopment())
 {

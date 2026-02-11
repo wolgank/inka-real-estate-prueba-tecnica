@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Infrastructure.Authentication;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<IPdfService, PdfService>();
 
         return services;
     }
