@@ -1,16 +1,19 @@
 using Application.DTOs.Products;
 using Application.Interfaces;
 using Domain.Entities;
+using FluentValidation;
 
 namespace Application.Services;
 
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
+    private readonly IValidator<CreateProductDto> _validator;
 
-    public ProductService(IProductRepository productRepository)
+    public ProductService(IProductRepository productRepository, IValidator<CreateProductDto> validator)
     {
         _productRepository = productRepository;
+        _validator = validator;
     }
 
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
@@ -27,6 +30,9 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> CreateAsync(CreateProductDto dto)
     {
+        var validationResult = await _validator.ValidateAsync(dto);
+        if (!validationResult.IsValid) 
+            throw new ValidationException(validationResult.Errors);
         var product = new Product
         {
             Name = dto.Name,
