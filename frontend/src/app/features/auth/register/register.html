@@ -1,0 +1,69 @@
+<div class="flex items-center justify-center min-h-screen bg-zinc-50 px-4">
+  <section hlmCard class="w-full max-w-md p-4 bg-white shadow-sm border-zinc-200">
+    <div hlmCardHeader>
+      <h3 hlmCardTitle class="text-2xl font-bold tracking-tight text-center">Crear Cuenta</h3>
+      <p hlmCardDescription class="text-center text-zinc-500">Regístrate para gestionar el inventario</p>
+    </div>
+
+    <div hlmCardContent>
+      <form (submit)="onSubmit($event)" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid gap-1.5">
+            <label hlmLabel for="firstName">Nombres</label>
+            <input hlmInput id="firstName" name="firstName" [(ngModel)]="form().firstName" placeholder="Ej: Jonh" />
+          </div>
+          <div class="grid gap-1.5">
+            <label hlmLabel for="lastName">Apellidos</label>
+            <input hlmInput id="lastName" name="lastName" [(ngModel)]="form().lastName" placeholder="Ej: Doe" />
+          </div>
+
+          <div class="grid gap-1.5">
+            <label hlmLabel for="dni">DNI</label>
+            <input hlmInput id="dni" name="dni" [(ngModel)]="form().dni" placeholder="8 dígitos" maxlength="8" />
+          </div>
+          <div class="grid gap-1.5">
+            <label hlmLabel for="phoneNumber">Teléfono</label>
+            <input hlmInput id="phoneNumber" name="phoneNumber" [(ngModel)]="form().phoneNumber"
+              placeholder="987654321" />
+          </div>
+        </div>
+
+        <div class="grid gap-1.5 mt-4">
+          <label hlmLabel for="email">Correo Electrónico</label>
+          <input hlmInput type="email" id="email" name="email" [(ngModel)]="form().email"
+            placeholder="jonh.doe@gmail.com" />
+        </div>
+
+        <div class="grid gap-1.5 mt-4">
+          <label hlmLabel for="username">Usuario de Acceso</label>
+          <input hlmInput id="username" name="username" [(ngModel)]="form().username" placeholder="jonhdoe" />
+        </div>
+
+        <div class="grid gap-1.5 mt-4">
+          <label hlmLabel for="password">Contraseña</label>
+          <input hlmInput type="password" id="password" name="password" [(ngModel)]="form().password"
+            placeholder="••••••••" />
+        </div>
+
+        <div class="grid gap-1.5 mt-4">
+          <label hlmLabel for="role">Rol</label>
+          <select hlmInput id="role" name="role" [(ngModel)]="form().role" class="w-full bg-white">
+            <option value="Employee">Empleado</option>
+            <option value="Admin">Administrador</option>
+          </select>
+        </div>
+
+        @if (errorMessage()) {
+        <div class="p-3 text-xs font-medium text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {{ errorMessage() }}
+        </div>
+        }
+
+        <button hlmBtn class="w-full bg-zinc-900 text-white hover:bg-zinc-800" [disabled]="loading()">
+          {{ loading() ? 'Creando cuenta...' : 'Registrarse' }}
+        </button>
+      </form>
+    </div>
+
+  </section>
+</div>

@@ -1,7 +1,7 @@
 using Application.DTOs.Auth;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace API.Controllers;
 
 [ApiController]
@@ -15,6 +15,7 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
