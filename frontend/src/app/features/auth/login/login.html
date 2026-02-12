@@ -1,0 +1,53 @@
+<div class="flex items-center justify-center min-h-screen bg-zinc-50">
+  <section hlmCard class="w-full max-w-sm p-2 bg-white shadow-sm border-zinc-200">
+    <div hlmCardHeader>
+      <h3 hlmCardTitle class="text-2xl font-bold tracking-tight text-center">Inka Real Estate</h3>
+      <p hlmCardDescription class="text-center text-zinc-500">Ingresa tus credenciales para continuar</p>
+    </div>
+
+    <div hlmCardContent>
+      <form (submit)="onSubmit($event)" class="space-y-4">
+        <div class="grid w-full items-center gap-1.5">
+          <label hlmLabel for="username">Usuario</label>
+          <input hlmInput 
+            type="text" 
+            id="username" 
+            [ngModel]="form().username" 
+            (ngModelChange)="form.set({...form(), username: $event})"
+            name="username" 
+            placeholder="Ej. daniel_admin" 
+            class="w-full" />
+        </div>
+
+        <div class="grid w-full items-center gap-1.5">
+          <label hlmLabel for="password">Contraseña</label>
+          <input hlmInput 
+            type="password" 
+            id="password" 
+            [ngModel]="form().password" 
+            (ngModelChange)="form.set({...form(), password: $event})"
+            name="password" 
+            placeholder="••••••••" 
+            class="w-full" />
+        </div>
+
+        @if (errorMessage()) {
+          <div class="p-3 text-xs font-medium text-red-600 bg-red-50 border border-red-200 rounded-md">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <button hlmBtn 
+                variant="default" 
+                class="w-full bg-zinc-900 text-white hover:bg-zinc-800" 
+                [disabled]="loading()">
+          {{ loading() ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+        </button>
+      </form>
+    </div>
+    
+    <div hlmCardFooter class="justify-center">
+      <p class="text-xs text-zinc-400">Sistema de Gestión de Inventarios v1.0</p>
+    </div>
+  </section>
+</div>
