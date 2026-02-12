@@ -44,20 +44,5 @@ services:
       db:
         condition: service_healthy
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: inka_frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules # Evita que los node_modules locales pisen los del contenedor
-    ports:
-      - "4200:4200"
-    environment:
-      - NODE_ENV=development
-    depends_on:
-      - api
-
 volumes:
   postgres_data:

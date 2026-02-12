@@ -3,12 +3,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly _http = inject(HttpClient);
   private readonly _platformId = inject(PLATFORM_ID);
-  private readonly _apiUrl = 'http://localhost:5156/api/Auth';
+  private readonly _apiUrl = `${environment.apiUrl}/Auth`;
 
   private readonly _token = signal<string | null>(this._getInitialToken());
   public readonly isAuthenticated = computed(() => !!this._token());

@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'; // Añadimos Htt
 import { CommonModule, CurrencyPipe, isPlatformBrowser } from '@angular/common';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-product-list',
@@ -52,7 +53,7 @@ export class ProductListComponent implements OnInit {
   ngOnInit() {
     // Solo cargamos productos si estamos en el navegador para evitar errores de SSR
     if (isPlatformBrowser(this.platformId)) {
-      this.http.get<any[]>('http://localhost:5156/api/Products').subscribe({
+      this.http.get<any[]>(`${environment.apiUrl}/Products`).subscribe({
         next: (data) => this.products.set(data),
         error: (err) => console.error('Error al cargar productos', err)
       });
@@ -66,7 +67,7 @@ export class ProductListComponent implements OnInit {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     // Hacemos la petición como 'blob' para manejar el PDF binario
-    this.http.get('http://localhost:5156/api/Products/low-stock/report', {
+    this.http.get(`${environment.apiUrl}/Products/low-stock/report`, {
       headers,
       responseType: 'blob' 
     }).subscribe({
